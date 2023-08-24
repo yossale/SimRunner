@@ -605,7 +605,7 @@ public class TemplateManager {
     }
 
     private Generator _valueGenerator(String operator, DocumentGenerator params) {
-        var split = operator.split("\\.");
+        var split = operator.split("\\.");        
         switch (split[0]) {
             case "%objectid": return ValueGenerators.objectId();
             case "%bool":
@@ -717,6 +717,7 @@ public class TemplateManager {
 
             // hack to bypass common Faker functions that are very slow
             case "%name": return Name.gen(split[1]);
+                
             case "%address": return Address.gen(split[1]);
             case "%lorem": return Lorem.gen(split[1]);
 
