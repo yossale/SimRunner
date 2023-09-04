@@ -743,6 +743,7 @@ public class TemplateManager {
 
             // hack to bypass common Faker functions that are very slow
             case "%name": return Name.gen(split[1]);
+            case "%fullName": return Name.gen("name");
                 
             case "%address": return Address.gen(split[1]);
             case "%lorem": return Lorem.gen(split[1]);

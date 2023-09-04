@@ -1,0 +1,50 @@
+{
+    "connectionString": "$PLAYGROUND_DB_URI",    
+    "reportInterval": 10000,
+    "templates": [        
+        {
+            "name": "employeeTicket",
+            "database": "federated_tickets",
+            "collection": "employee_tickets",
+            "drop": true,
+            "createOptions": {
+                "validator": {
+                    "sequence": {"$exists": true}
+                }
+            },
+            "dictionaries": {      
+                "words": {"file": "/usr/share/dict/words", "type":"text"},          
+                "statuses": ["OPEN", "PENDING", "REJECTED", "CLOSED_BY_USER", "FIXED", "REJECTED", "CLOSED"],
+                "assignee": ["Margot Robbie", "Ryan Gosling", "Will Ferrell", "Emma Mackey", "Simu Liu", "Michael Cera", "Kate McKinnon", "Ameirca Ferrera"]
+            },
+            "variables": {                
+                "createDate": {"%date":{"min": {"$date": "2021-10-01"}, "max": {"$date": "2023-08-23"}}}                
+            },
+            "template": {
+                "_id": "%objectid",                
+                "first": "%name.firstName",
+                "last": "%name.lastName",                
+                "title": "%lorem.sentence",                
+                "description": "%lorem.sentence",                
+                "createdAt": "#createDate",
+                "employeeId": {"%number": {"min": 1000, "max": 12000}},
+                "assignee": {"%dictionary": {"name": "assignee"}},
+                "status": {"%dictionary": {"name": "statuses"}},
+                "updateAt": {"%date": {"min": "#createDate", "max": {"$date": "2023-08-23"}}}
+             },            
+            "indexes": [ { "first": 1} ]
+        }
+    ],
+
+    "workloads": [        
+        {
+            "name": "Insert Employee Ticket",
+            "template": "employeeTicket",
+            "op": "insert",
+            "threads": 4,
+            "batch": 100,
+            "stopAfter": 250
+        }
+    ]
+    
+}
