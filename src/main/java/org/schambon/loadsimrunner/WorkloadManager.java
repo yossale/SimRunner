@@ -20,6 +20,7 @@ import org.schambon.loadsimrunner.runner.FindRunner;
 import org.schambon.loadsimrunner.runner.InsertRunner;
 import org.schambon.loadsimrunner.runner.ReplaceOneRunner;
 import org.schambon.loadsimrunner.runner.ReplaceWithNewRunner;
+import org.schambon.loadsimrunner.runner.TimeSeriesRunner;
 import org.schambon.loadsimrunner.runner.UpdateManyRunner;
 import org.schambon.loadsimrunner.runner.UpdateOneRunner;
 import org.schambon.loadsimrunner.runner.WorkloadThread;
@@ -122,8 +123,8 @@ public class WorkloadManager {
 
 
         if (this.batch > 0) {
-            if (! ("insert".equals(op) || "updateOne".equals(op) || "updateMany".equals(op) || "replaceWithNew".equals(op) )) {
-                throw new InvalidConfigException("Op must be insert or update(One|Many) or replaceWithNew for batch/bulk work");
+            if (! ("insert".equals(op) || "updateOne".equals(op) || "updateMany".equals(op) || "replaceWithNew".equals(op) || "timeseries".equals(op) )) {
+                throw new InvalidConfigException("Op must be insert, update(One|Many), replaceWithNew, or timeseries for batch/bulk work");
             }
         }
     }
@@ -131,6 +132,8 @@ public class WorkloadManager {
     public void initAndStart(MongoClient client, Reporter reporter) {
         this.client = client;
         this.reporter = reporter;
+
+        LOGGER.info("Starting workload {}", name);
 
         for (var i = 0; i < threads; i++) {
             Thread thread = new WorkloadThread(name, i, getRunnable());
@@ -149,6 +152,7 @@ public class WorkloadManager {
             case "replaceOne": return new ReplaceOneRunner(this, reporter);
             case "replaceWithNew": return new ReplaceWithNewRunner(this, reporter);
             case "aggregate": return new AggregationRunner(this, reporter);
+            case "timeseries": return new TimeSeriesRunner(this, reporter);
             case "custom": return new CustomRunner(this, reporter);
             default:
                 LOGGER.warn("Not implemented (yet?)");

@@ -13,6 +13,42 @@ Thanks to all this, SimRunner can reproduce fairly closely realistic workloads o
 
 It should be considered a "work in progress" and comes without any support or guarantee, either from MongoDB, Inc. or myself.
 
+Contents
+--------
+
+- [SimRunner](#simrunner)
+  - [Contents](#contents)
+  - [TL;DR](#tldr)
+  - [What's new?](#whats-new)
+  - [Config file](#config-file)
+  - [Templates](#templates)
+    - [Template expressions](#template-expressions)
+    - [Template variables (interdependant fields)](#template-variables-interdependant-fields)
+    - [Dictionaries](#dictionaries)
+    - [Remembered values](#remembered-values)
+    - [Hash-name evaluation](#hash-name-evaluation)
+    - [Create Options](#create-options)
+    - [Sharding](#sharding)
+    - [Template instances](#template-instances)
+  - [Workloads](#workloads)
+    - [Common parameters](#common-parameters)
+    - [Insert](#insert)
+    - [find](#find)
+    - [updateOne and updateMany](#updateone-and-updatemany)
+    - [replaceOne](#replaceone)
+    - [replaceWithNew](#replacewithnew)
+    - [aggregate](#aggregate)
+    - [timeseries](#timeseries)
+  - [Output](#output)
+  - [HTTP interface](#http-interface)
+  - [MongoDB Reporting](#mongodb-reporting)
+  - [Tips and tricks](#tips-and-tricks)
+    - [Mix remembered fields and variables](#mix-remembered-fields-and-variables)
+    - [Comment your code!](#comment-your-code)
+    - [Bulk writes and variables](#bulk-writes-and-variables)
+  - [Limitations](#limitations)
+
+
 
 TL;DR
 -----
@@ -20,7 +56,7 @@ TL;DR
 Build with `mvn package` and run with `java -jar SimRunner.jar <config file>`. Needs at least Java 11 (tested with 17 as well).
 
 The config file specifies:
-* a connection string to MongoDB
+* a connection string to MongoDB - if it starts with '$' SimRunner will use environment variables
 * a number of `templates` which specify document shapes and map them to collections
 * a number of `workloads` which specify actions to take on those templates
 
@@ -38,6 +74,15 @@ For easy setup in EC2, a quick and dirty script to provision a machine etc. is a
 
 If you want to run it as a Docker container a Dockerfile is provided. In this case, you need to create a config file in the `bin` directory named `config.json` and then build your Docker image.
 
+
+What's new?
+-----------
+
+| Date       |                                                     |
+|------------|-----------------------------------------------------|
+| 2023-09-01 | [Timeseries support](#timeseries)                   |
+| 2023-08-22 | Enviroment variables support for connection strings |
+
 Config file
 -----------
 
@@ -46,7 +91,7 @@ The config file is parsed as Extended JSON - so you can specify things like date
 Let's look at an example:
 ```
 {
-    "connectionString": "mongodb://localhost:27017",
+    "connectionString": "$MONGO_URI",
     "reportInterval": 1000,
     "http": {
         "enabled": false,
@@ -100,6 +145,8 @@ Let's look at an example:
 ```
 
 This config specifies a connection to a local MongoDB without authentication, a simple "person" template that maps to the `test.people` collection, and two workloads: one that inserts new people in the database at a rate of one batch of 1000 every 100ms, and one that looks up a single person by `_id`.
+
+Note that `connectionString` can be either a MongoDB URI itself (e.g. `mongodb://localhost:27017`) or a reference to an environment variable (e.g. `$MONGO_URI`).
 
 A few things can be seen already:
 * templates are _named_ and referenced by name in the workloads.
@@ -204,7 +251,7 @@ Note: variables can also be defined in a workload definition, and used in templa
 
 ### Dictionaries
 
-Dictionaries let you create custom sets of data that the template system will pick into. Dictionaries can be a static list, a JSON file read on disk, a plain text file read on disk, or even a MongoDB collection from your cluster.
+Dictionaries let you create custom sets of data that the template system will pick into. Dictionaries can be a static list, a JSON file read on disk, a plain text file read on disk, a fixed number of objects generated through a template expression, or even a MongoDB collection from your cluster.
 
 Example:
 
@@ -214,6 +261,7 @@ Example:
     "statuses": ["RUNNING", {"status": "DONE", "substatus": "OK"}, {"status": "DONE", "substatus": "NOK"}],
     "characters": {"file": "characters.json", "type": "json"},
     "locations": {"file": "locations.txt", "type": "text"},
+    "dates": {"type": "templateUnique", "size": 10, "template": "%natural"}
     "identifiers": {"type": "collection", "collection": "referenceIdentifiers", "db": "refdb", "query": {"valid": true}, "limit": 1000, "attribute": "name"}
 }
 ```
@@ -339,7 +387,7 @@ and query it like this:
 }
 ```
 
-Arrays are (now) supported in remembering values: they are unwound so only scalar values are remembered. If you have a compound remember specification, the cartesian product of arrays are unwound. For example, consider the following document:
+Arrays are supported in remembering values: they are unwound so only scalar values are remembered. If you have a compound remember specification, the cartesian product of arrays are unwound. For example, consider the following document:
 
 ```
 {
@@ -575,6 +623,66 @@ Run an aggregation pipeline.
 Options:
 * pipeline: the pipeline to run. No particular restrictions (if on Atlas, this can call Atlas search `$search` indexes for example). All stages are run through the template generator.
 
+### timeseries
+
+This is a special workload type for timeseries insertion.
+
+```
+{
+    "comment": "Insert historical data",
+    "name": "Insert",
+    "template": "metrics",
+    "op": "timeseries",
+    "threads": 1,
+    "batch": 200,
+    "pace": 10,
+    "comments": [
+        "Threads should always be 1 or absent for timeseries",
+        "Batch and Pace work as expected"
+    ],
+    "params": {
+        "meta": {
+            "metaField": "sensorId",
+            "dictionary": "sensors",
+            "generate": "all",
+            "comment": "At each iteration of the workload, iterate over the full dictionary"
+        },
+        "time": {
+            "timeField": "ts",
+            "start": {"$date": "2023-01-01"},
+            "stop": {"$date": "2023-01-31"},
+            "step": 300000,
+            "jitter": 30000,
+            "comment": [
+                "Increment a timer based on step / jitter. This is useful for backfilling history.",
+                "For ongoing, use 'value': '%now' (or other template) instead of start/stop/step/jitter"
+            ]
+        },
+        "workers": 1000
+    }
+}
+```
+
+__NOTE__: Timeseries workloads do not check whether the underlying collection is a timeseries collection. It actually works very well with regular collections too! It just will not leverage MongoDB 5+'s timeseries optimizations. Ensure (in the template or in an out-of-band init script) that the collection is setup as you want.
+
+Each record in a time series has a `meta` field (which identifies the series) and a time field. In a timeseries workload:
+- you should always set `threads` to 1. Setting threads to more than 1 will just run several times the workload in parallel, each with its own "timeline" so this is probably not what you want. Parallelization is achieved through the `workers` parameter instead.
+- `pace` works as usual.
+- the associated template should __NOT__ contain time fields or meta fields. This is set by the workload.
+- you _must_ provide a dictionary that contains the `meta` values.
+
+Each time the workload runs, it will generate documents for a number of series (controlled by the `generate` option; supported are `"all"` and `{"random": "expression"}`). It will then generate a timestamp with one of two options:
+- `start` / `stop` / `step`: the workload keeps a clock initalized at `start`. At each run it will increase by `step` milliseconds. When the clock reaches `stop`, the workload stops. This clock will be used for all series generated in the run. You can add per-series noise using the `jitter` option (in milliseconds): each individual record's timestamp will be the global clock plus or minus jitter milliseconds. `stop` and `jitter` are optional.
+- `value` pass in an expression that resolves to a date.
+
+In general you will use `start`/`step` to populate historical data, then use `value` (often with `%now`) to simulate ongoing activity.
+
+Once all records are generated, they are inserted according to the `batch` option:
+- a numeric value will cause insertMany statements with `batch` documents per statement
+- any other value will cause single insertOne statements to be issued for each document
+
+Write operations are spread out over a number of `worker` threads (defaulting to 1).
+
 Output
 ------
 
@@ -664,7 +772,7 @@ Configuration:
 ```
 "mongoReporter": {
     "enabled": true,
-    "connectionString": "mongodb://localhost:27017",
+    "connectionString": "$REPORTER_MONGO_URI",
     "database": "simrunner",
     "collection": "report",
     "drop": false,
@@ -673,7 +781,7 @@ Configuration:
 ```
 
 * `enabled`: should we log results to MongoDB ? (default: `false`)
-* `connectionString`: MongoDB connection string. Does not have to be the same as the tested cluster (arguably, should not.)
+* `connectionString`: MongoDB connection string. Does not have to be the same as the tested cluster (arguably, should not). This can be either the connection URI itself (e.g. `mongodb+srv://<user>:<pass>@cluster.xprv.mongodb.net`) or a reference to an environment variable.
 * `database`: database in which to store the reports
 * `collection`: collection in which to store the reports
 * `drop`: drop the collection? (default: `false`)
