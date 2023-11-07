@@ -5,7 +5,7 @@
         {
             "name": "userTicket",
             "database": "poc_demo",
-            "collection": "tickets_100",
+            "collection": "tickets_pa",
             "drop": true,            
             "dictionaries": {
                 "statuses": [
@@ -32,17 +32,26 @@
                 "createDate": {
                     "%date": {
                         "min": {
-                            "$date": "2021-10-01"
+                            "$date": "2022-01-01"
                         },
                         "max": {
-                            "$date": "2023-03-23"
+                            "$date": "2022-12-31"
                         }
                     }
                 }
             },
             "template": {
-                "_id": "%objectid",
-                "tenantId": "#tenantId",
+                "_id": "%objectid",      
+                "runId": {
+                    "%toString": {
+                        "of": {
+                            "%natural": {
+                                "min": 10000,
+                                "max": 325000
+                            }
+                        }
+                    }
+                },          
                 "name": "%fullName",
                 "title": "%lorem.sentence",
                 "description": "%lorem.sentence",
@@ -67,14 +76,6 @@
                         "name": "statuses"
                     }
                 },
-                "updateAt": {
-                    "%date": {
-                        "min": "#createDate",
-                        "max": {
-                            "$date": "2023-08-23"
-                        }
-                    }
-                },
                 "severity": {
                     "%dictionary": {
                         "name": "severity"
@@ -88,10 +89,7 @@
                 {
                     "status": 1,
                     "severity": 1
-                },
-                {
-                    "createdAt": -1
-                },
+                },                
                 {
                     "tenantId": 1,
                     "assignee": 1                    
@@ -99,17 +97,14 @@
             ]
         }
     ],
-    "workloads": [        
+    "workloads": [
         {
-            "name": "100M",
-            "variables": {
-                "tenantId": "100M"
-            },            
+            "name": "10M",         
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
-            "batch": 1000,
-            "stopAfter": 10000
-        }
+            "batch": 100,
+            "stopAfter": 100
+        }        
     ]
 }
