@@ -99,12 +99,12 @@
     ],
     "workloads": [
         {
-            "name": "10M",         
+            "name": "300M",         
             "template": "userTicket",
             "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 100
+            "threads": 20,
+            "batch": 500,
+            "stopAfter": 30000
         }        
     ]
 }
