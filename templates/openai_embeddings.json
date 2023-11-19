@@ -1,0 +1,85 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "openai_embeddings",
+            "database": "vectors",
+            "collection": "openai_embeddings",
+            "drop": true,            
+            "dictionaries": {
+                "statuses": [
+                    "OPEN",
+                    "PENDING",
+                    "REJECTED",
+                    "CLOSED_BY_USER",
+                    "FIXED",
+                    "CLOSED"
+                ],
+                "severity": [
+                    "LOW",
+                    "NORMAL",
+                    "HIGH",
+                    "URGENT",
+                    "CRITICAL"
+                ]
+            },
+            "variables": {
+                "createDate": {
+                    "%date": {
+                        "min": {
+                            "$date": "2022-01-01"
+                        },
+                        "max": {
+                            "$date": "2022-12-31"
+                        }
+                    }
+                }
+            },
+            "template": {
+                "_id": "%objectid",    
+                "docId": {
+                    "%number": {
+                        "min": 10000
+                    }
+                },                                            
+                "createdAt": "#createDate",
+                "status": {
+                    "%dictionary": {
+                        "name": "statuses"
+                    }
+                },
+                "severity": {
+                    "%dictionary": {
+                        "name": "severity"
+                    }
+                },
+                "embedding": {
+                    "%array": {
+                        "size": 1536,
+                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
+                    }
+                }
+            },
+            "indexes": [
+                {
+                    "docId": 1
+                },
+                {
+                    "status": 1,
+                    "severity": 1
+                }
+            ]
+        }
+    ],
+    "workloads": [
+        {
+            "name": "70M",         
+            "template": "openai_embeddings",
+            "op": "insert",
+            "threads": 20,
+            "batch": 500,
+            "stopAfter": 30000
+        }        
+    ]
+}
