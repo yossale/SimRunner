@@ -1,12 +1,12 @@
 {
-    "connectionString": "$DEMO_DB_URI",
+    "connectionString": "$OPENAI_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
             "name": "openai_embeddings",
             "database": "vectors",
             "collection": "openai_embeddings",
-            "drop": true,            
+            "drop": false,            
             "dictionaries": {
                 "statuses": [
                     "OPEN",
@@ -79,7 +79,7 @@
             "op": "insert",
             "threads": 20,
             "batch": 500,
-            "stopAfter": 30000
+            "stopAfter": 10
         }        
     ]
 }
