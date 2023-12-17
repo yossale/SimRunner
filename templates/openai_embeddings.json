@@ -79,7 +79,7 @@
             "op": "insert",
             "threads": 20,
             "batch": 500,
-            "stopAfter": 10
+            "stopAfter": 100
         }        
     ]
 }
