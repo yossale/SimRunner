@@ -82,6 +82,9 @@
                     "ticketId": 1
                 },
                 {
+                    "numUpdates": 1
+                },
+                {
                     "status": 1,
                     "severity": 1
                 },

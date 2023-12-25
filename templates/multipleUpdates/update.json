@@ -82,6 +82,9 @@
                     "ticketId": 1
                 },
                 {
+                    "numUpdates": 1
+                },
+                {
                     "status": 1,
                     "severity": 1
                 },
@@ -107,9 +110,9 @@
                 "filter": {"ticketId": {"%natural": {"min": 0, "max": 15000000}}},
                 "update": { "$inc": { "numUpdates": 1 } }
             },
-            "threads": 1,
+            "threads": 10,
             "batch": 100,
-            "stopAfter": 1
+            "stopAfter": 100
         }
     ]
 }
