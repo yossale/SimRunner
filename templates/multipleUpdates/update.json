@@ -6,7 +6,7 @@
             "name": "multiUpdates",
             "database": "poc_demo",
             "collection": "tickets_15M_updates",
-            "drop": true,            
+            "drop": false,            
             "dictionaries": {
                 "statuses": [
                     "OPEN",
