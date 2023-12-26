@@ -83,17 +83,6 @@
                 },
                 {
                     "numUpdates": 1
-                },
-                {
-                    "status": 1,
-                    "severity": 1
-                },
-                {
-                    "createdAt": -1
-                },
-                {
-                    "tenantId": 1,
-                    "assignee": 1                    
                 }
             ]
         }
