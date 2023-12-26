@@ -100,7 +100,7 @@
                 "update": { "$inc": { "numUpdates": 1 } }
             },
             "threads": 10,
-            "batch": 100,
+            "batch": 1000,
             "stopAfter": 100
         }
     ]
