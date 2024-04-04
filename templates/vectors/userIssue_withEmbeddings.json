@@ -79,6 +79,12 @@
                     "%dictionary": {
                         "name": "severity"
                     }
+                },
+                "embedding": {
+                    "%array": {
+                        "size": 1536,
+                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
+                    }
                 }
             },
             "remember": [
@@ -90,63 +96,99 @@
                     "name": "customerAndAssignee"
                 }
             ],
-            "indexes": [
-                {
-                    "ticketId": 1
-                },
-                {
-                    "status": 1,
-                    "severity": 1
-                },
-                {
-                    "createdAt": -1
-                },
+            "indexes": [                
                 {
                     "tenantId": 1,
-                    "assignee": 1
+                    "createdAt": -1,
+                    "severity": 1
+                },                
+                {
+                    "tenantId": 1,
+                    "createdAt": -1,
+                    "assignee": 1,
+                    "status": 1
                 }
             ]
         }
     ],
     "workloads": [
         {
-            "name": "100M",
+            "name": "50K",
             "variables": {
-                "tenantId": "100M"
+                "tenantId": "50K"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 50
+        },
+        {
+            "name": "250K",
+            "variables": {
+                "tenantId": "250K"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 250
+        },
+        {
+            "name": "500K",
+            "variables": {
+                "tenantId": "500K"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 500
+        },
+        {
+            "name": "1M",
+            "variables": {
+                "tenantId": "1M"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 1000
+        },
+        {
+            "name": "2M",
+            "variables": {
+                "tenantId": "2M"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 2000
+        },
+        {
+            "name": "5M",
+            "variables": {
+                "tenantId": "5M"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 5000
+        },
+        {
+            "name": "10M",
+            "variables": {
+                "tenantId": "10M"
             },
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
             "batch": 100,
             "stopAfter": 10000
-        },
-        {
-            "name": "100M",
-            "variables": {
-                "tenantId": "100M"
-            },
-            "template": "userTicket",
-            "op": "aggregate",
-            "threads": 10,
-            "stopAfter": 10000,
-            "params": {
-                "pipeline": [
-                    {
-                        "$match": {
-                            "customerId": "#customerAndAssignee.customerId",
-                            "assignee": "#customerAndAssignee.assignee"
-                        }
-                    },
-                    {
-                        "$group": {                            
-                            "_id": "#customerAndAssignee.customerId",
-                            "count": {
-                                "$count": {}
-                            }
-                        }
-                    }
-                ]
-            }
         }
+        
     ]
 }
