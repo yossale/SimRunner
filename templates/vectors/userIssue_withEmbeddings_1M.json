@@ -1,0 +1,118 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "userTicket",
+            "database": "vectors",
+            "collection": "tickets_1M_1536",
+            "drop": true,
+            "dictionaries": {
+                "statuses": [
+                    "OPEN",
+                    "PENDING",
+                    "REJECTED",
+                    "CLOSED_BY_USER",
+                    "FIXED",
+                    "CLOSED"
+                ],
+                "severity": [
+                    "LOW",
+                    "NORMAL",
+                    "HIGH",
+                    "URGENT",
+                    "CRITICAL"
+                ],
+                "assignee": {
+                    "file": "./resources/actors_100.json",
+                    "type": "json"
+                }
+            },
+            "variables": {
+                "createDate": {
+                    "%date": {
+                        "min": {
+                            "$date": "2021-10-01"
+                        },
+                        "max": {
+                            "$date": "2023-03-23"
+                        }
+                    }
+                }
+            },
+            "template": {
+                "_id": "%objectid",
+                "tenantId": "#tenantId",
+                "name": "%fullName",
+                "title": "%lorem.sentence",
+                "description": "%lorem.sentence",
+                "createdAt": "#createDate",
+                "ticketId": {
+                    "%number": {
+                        "min": 10000
+                    }
+                },
+                "customerId": {
+                    "%stringTemplate": {
+                        "template": "!!&&?!??&"
+                    }
+                },
+                "assignee": {
+                    "%dictionary": {
+                        "name": "assignee"
+                    }
+                },
+                "status": {
+                    "%dictionary": {
+                        "name": "statuses"
+                    }
+                },
+                "updateAt": {
+                    "%date": {
+                        "min": "#createDate",
+                        "max": {
+                            "$date": "2023-08-23"
+                        }
+                    }
+                },
+                "severity": {
+                    "%dictionary": {
+                        "name": "severity"
+                    }
+                },
+                "embedding": {
+                    "%array": {
+                        "size": 1536,
+                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
+                    }
+                }
+            },            
+            "indexes": [                
+                {
+                    "tenantId": 1,
+                    "createdAt": -1,
+                    "severity": 1
+                },                
+                {
+                    "tenantId": 1,
+                    "createdAt": -1,
+                    "assignee": 1,
+                    "status": 1
+                }
+            ]
+        }
+    ],
+    "workloads": [        
+        {
+            "name": "1M",
+            "variables": {
+                "tenantId": "1M"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 1000
+        }        
+    ]
+}
