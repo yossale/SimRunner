@@ -4,8 +4,8 @@
     "templates": [
         {
             "name": "userTicket",
-            "database": "poc_demo",
-            "collection": "tickets_nuvei",
+            "database": "vectors",
+            "collection": "tickets_1536",
             "drop": true,
             "dictionaries": {
                 "statuses": [
@@ -86,16 +86,7 @@
                         "of":  {"%double": {"min": -0.9, "max": 0.97}} 
                     }
                 }
-            },
-            "remember": [
-                {
-                    "compound": [
-                        "customerId",
-                        "assignee"
-                    ],
-                    "name": "customerAndAssignee"
-                }
-            ],
+            },            
             "indexes": [                
                 {
                     "tenantId": 1,
