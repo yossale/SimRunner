@@ -3,9 +3,9 @@
     "reportInterval": 10000,
     "templates": [
         {
-            "name": "userTicket",
-            "database": "vectors",
-            "collection": "tickets_10K_380",
+            "name": "constantLoad",
+            "database": "poc_demo",
+            "collection": "tickets_constantLoad",
             "drop": true,
             "dictionaries": {
                 "statuses": [
@@ -79,107 +79,47 @@
                     "%dictionary": {
                         "name": "severity"
                     }
-                },
-                "embedding": {
-                    "%array": {
-                        "size": 380,
-                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
-                    }
                 }
-            },            
-            "indexes": [                
+            },
+            "remember": [
                 {
-                    "tenantId": 1,
-                    "createdAt": -1,
+                    "compound": [
+                        "customerId",
+                        "assignee"
+                    ],
+                    "name": "customerAndAssignee"
+                }
+            ],
+            "indexes": [
+                {
+                    "ticketId": 1                    
+                },
+                {
+                    "status": 1,
                     "severity": 1
-                },                
+                },
+                {
+                    "createdAt": -1
+                },
                 {
                     "tenantId": 1,
-                    "createdAt": -1,
-                    "assignee": 1,
-                    "status": 1
+                    "assignee": 1
                 }
             ]
         }
     ],
     "workloads": [
         {
-            "name": "50K",
+            "name": "100M",
             "variables": {
-                "tenantId": "50K"
+                "tenantId": "100M"
             },
-            "template": "userTicket",
+            "template": "constantLoad",
             "op": "insert",
-            "threads": 10,
+            "threads": 20,
             "batch": 100,
-            "stopAfter": 50
-        },
-        {
-            "name": "250K",
-            "variables": {
-                "tenantId": "250K"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 250
-        },
-        {
-            "name": "500K",
-            "variables": {
-                "tenantId": "500K"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 500
-        },
-        {
-            "name": "1M",
-            "variables": {
-                "tenantId": "1M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 1000
-        },
-        {
-            "name": "2M",
-            "variables": {
-                "tenantId": "2M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 2000
-        },
-        {
-            "name": "5M",
-            "variables": {
-                "tenantId": "5M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 5000
-        },
-        {
-            "name": "10M",
-            "variables": {
-                "tenantId": "10M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 10000
-        }
-        
+            "pace": 250,
+            "stopAfter": 1000000
+        }        
     ]
 }

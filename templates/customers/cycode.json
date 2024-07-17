@@ -1,0 +1,191 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "cycode1",
+            "database": "poc_demo",
+            "collection": "ccd_tickets",
+            "drop": true,
+            "dictionaries": {                
+                "severity": [
+                    "INFO",
+                    "WARN",
+                    "HIGH",
+                    "URGENT",
+                    "CRITICAL"
+                ],
+                "status": [
+                    "Open",
+                    "Resolved",
+                    "Closed"                 
+                ]
+            },
+            "variables": {
+                "createDate": {
+                    "%date": {
+                        "min": {
+                            "$date": "2021-10-01"
+                        },
+                        "max": {
+                            "$date": "2023-03-23"
+                        }
+                    }
+                }
+            },
+            "template": {
+                "_id": "%uuidBinary",                
+                "createdAt": "#createDate",                
+                "updatedAt": {
+                    "%date": {
+                        "min": "#createDate",
+                        "max": {
+                            "$date": "2023-08-23"
+                        }
+                    }
+                },
+                "tenantId": "#tenantId",
+                "ownerUserId": null,
+                "projectIds": {"%array": { "min": 1, "max": 10, "of": { "%stringTemplate": {
+                        "template": "projectId_&&"
+                    } }}},
+                "sourcePolicyId": "%uuidString",
+                "detectionId": {"%binary": {"size": 256, "as": "hex"}},
+                "detectionTypeId": "%uuidString",
+                "sourcePolicyName": "Secrets detection",
+                "sourcePolicyType": "SensitiveContent",
+                "category": "SecretDetection",
+                "sourceEntityId": "str",
+                "sourceEntityName": "str",
+                "sourceEntityType": "User",
+                "severity": {"%integer": {"min": 1, "max": 5}},
+                "status": {
+                    "%dictionary": {
+                        "name": "severity"
+                    }
+                },
+                "statusUpdatedAt": null,
+                "firstClosedAt": null,
+                "statusReason": null,
+                "statusChangeMessage": null,
+                "remediable": "%boolean",
+                "tags": [
+                  "publicly-exposed",
+                  "code-snippet",
+                  "user-repo",
+                  "exist-in-latest-code"
+                ],
+                "detectionDetails": {
+                  "organization_name": "",
+                  "organization_id": {
+                    "%stringTemplate": {
+                        "template": "orgId_&"
+                    }
+                  },
+                  "sha512": {"%binary": {"size": 512, "as": "hex"}},
+                  "provider": "GithubGist",
+                  "concrete_provider": "GithubGist",
+                  "length": {"%integer": {"min": 1, "max": 64}},
+                  "start_position": {"%integer": {"min": 0, "max": 1000000}},
+                  "line": {"%integer": {"min": 1, "max": 10000}},
+                  "secret_storage_details": {
+                    "_t": "System.Collections.Generic.Dictionary`2[System.String,System.Object]",
+                    "_v": {
+                      "path": "uuid.json",
+                      "folder": "secrets",
+                      "size": {"%integer": {"min": 1, "max": 10000000}},
+                      "is_external": "%boolean"
+                    }
+                  },
+                  "commit_id": {"%binary": {"size": 26, "as": "hex"}},
+                  "member_id": "str",
+                  "member_name": "str",
+                  "member_email": "str@github.com",
+                  "author_name": "str",
+                  "author_email": "str@github.com",
+                  "branch_name": {"%stringTemplate": {
+                        "template": "branchName_&"
+                    }},
+                  "committer_name": "GitHub",
+                  "committed_at": {
+                    "_t": "System.DateTimeOffset",
+                    "_v": [
+                      "%long",
+                      -240
+                    ]
+                  },
+                  "file_path": "/",
+                  "file_name": "diff.json",
+                  "file_extension": ".json",
+                  "url": "https://gist.github.com/uuid.git",
+                  "should_resolve_upon_branch_deletion": "%boolean",
+                  "position_in_line": {"%integer": {"min": 1, "max": 100}},
+                  "repository_id": "MDQ6R2lzdDdjY2Q1ZDhjMjNkMGRhOWMzMjA0NWVhNTY5NzE0NGQw",
+                  "line_in_file": {"%integer": {"min": 1, "max": 1000}},
+                  "line_type": "Added",
+                  "old_detection_id": {"%binary": {"size": 256, "as": "hex"}},
+                  "validation_status": "Revoked",
+                  "last_time_validity_checked": "%now",
+                  "last_time_checked_as_active": null,
+                  "first_time_checked_as_revoked": "%now",
+                  "validity_failure_reason": null,
+                  "member_affiliation_at_violation_time": "Contributor"
+                },
+                "correlationMessage": "str",
+                "isHidden": "%boolean",
+                "isPolicyDisabled": "%boolean",
+                "scanId": "%uuidString",
+                "provider": "GithubGist",
+                "assigneeId": null,
+                "statusUpdatedById": null,
+                "type": "adafruit-io-apikey",
+                "detectionRuleId": "%uuidString",
+                "subCategory": "Secrets",
+                "subCategoryV2": "Development Tools",
+                "classification": null,
+                "priority": {"%integer": {"min": 0, "max": 10}},
+                "metadata": null,
+                "timestamp": null,
+                "precedence": null,
+                "rootId": "",
+                "ttl": null,
+                "labels": [],
+                "policyLabels": [],
+                "sdlcStages": [
+                  "Code"
+                ],
+                "policyTags": [],
+                "remediations": [],
+                "instructionDetails": {
+                  "instructionNameToSingleIdMap": null,
+                  "instructionNameToMultipleIdsMap": null,
+                  "instructionTags": null
+                },
+                "sdlcStage": "Code",
+                "riskScore": {"%double": {"min": 0.0, "max": 10.0}},
+                "riskScoreSeverity": {
+                    "%dictionary": {
+                        "name": "severity"
+                    }
+                },
+                "externalDetectionReferences": []
+              },
+            "remember": [
+            ],
+            "indexes": []
+        }
+    ],
+    "workloads": [
+        {
+            "name": "100K",
+            "variables": {
+                "tenantId": "100K"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 10000
+        }
+    ]
+}

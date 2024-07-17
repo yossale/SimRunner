@@ -104,82 +104,15 @@
     ],
     "workloads": [
         {
-            "name": "50K",
+            "name": "10K",
             "variables": {
-                "tenantId": "50K"
+                "tenantId": "10K"
             },
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
             "batch": 100,
-            "stopAfter": 50
-        },
-        {
-            "name": "250K",
-            "variables": {
-                "tenantId": "250K"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 250
-        },
-        {
-            "name": "500K",
-            "variables": {
-                "tenantId": "500K"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 500
-        },
-        {
-            "name": "1M",
-            "variables": {
-                "tenantId": "1M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 1000
-        },
-        {
-            "name": "2M",
-            "variables": {
-                "tenantId": "2M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 2000
-        },
-        {
-            "name": "5M",
-            "variables": {
-                "tenantId": "5M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 5000
-        },
-        {
-            "name": "10M",
-            "variables": {
-                "tenantId": "10M"
-            },
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 100,
-            "stopAfter": 10000
-        }
-        
+            "stopAfter": 10
+        }        
     ]
 }

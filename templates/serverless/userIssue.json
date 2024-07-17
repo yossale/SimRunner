@@ -1,11 +1,11 @@
 {
-    "connectionString": "$SERVERLESS_DB_URI",
+    "connectionString": "$DEMO_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
             "name": "userTicket",
             "database": "poc_demo",
-            "collection": "tickets_nuvei",
+            "collection": "tickets_sample",
             "drop": true,
             "dictionaries": {
                 "statuses": [
@@ -118,7 +118,7 @@
             "op": "insert",
             "threads": 10,
             "batch": 100,
-            "stopAfter": 10000
+            "stopAfter": 10
         }        
     ]
 }

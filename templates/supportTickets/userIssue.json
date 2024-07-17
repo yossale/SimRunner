@@ -5,7 +5,7 @@
         {
             "name": "userTicket",
             "database": "poc_demo",
-            "collection": "tickets_nuvei",
+            "collection": "tickets_sample",
             "drop": true,
             "dictionaries": {
                 "statuses": [
@@ -42,6 +42,7 @@
             },
             "template": {
                 "_id": "%objectid",
+                "uuid": "%uuidBinary",
                 "tenantId": "#tenantId",
                 "name": "%fullName",
                 "title": "%lorem.sentence",
@@ -117,8 +118,8 @@
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
-            "batch": 100,
-            "stopAfter": 10000
+            "batch": 1,
+            "stopAfter": 100000
         },
         {
             "name": "100M",
@@ -128,7 +129,7 @@
             "template": "userTicket",
             "op": "aggregate",
             "threads": 10,
-            "stopAfter": 10000,
+            "stopAfter": 100000,
             "params": {
                 "pipeline": [
                     {
