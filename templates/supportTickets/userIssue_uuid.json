@@ -42,8 +42,7 @@
             },
             "template": {
                 "_id": "%objectid",
-                "uuid": "%uuidBinary",
-                "uuidStr": {"%toString": {"of": "#uuid"}},
+                "uuid": "%uuidBinary",                
                 "tenantId": "#tenantId",
                 "name": "%fullName",
                 "title": "%lorem.sentence",
@@ -82,16 +81,7 @@
                         "name": "severity"
                     }
                 }
-            },
-            "remember": [
-                {
-                    "compound": [
-                        "customerId",
-                        "assignee"
-                    ],
-                    "name": "customerAndAssignee"
-                }
-            ],
+            },            
             "indexes": [
                 {
                     "ticketId": 1
@@ -119,36 +109,8 @@
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
-            "batch": 1,
-            "stopAfter": 100000
-        },
-        {
-            "name": "100M",
-            "variables": {
-                "tenantId": "100M"
-            },
-            "template": "userTicket",
-            "op": "aggregate",
-            "threads": 10,
-            "stopAfter": 100000,
-            "params": {
-                "pipeline": [
-                    {
-                        "$match": {
-                            "customerId": "#customerAndAssignee.customerId",
-                            "assignee": "#customerAndAssignee.assignee"
-                        }
-                    },
-                    {
-                        "$group": {                            
-                            "_id": "#customerAndAssignee.customerId",
-                            "count": {
-                                "$count": {}
-                            }
-                        }
-                    }
-                ]
-            }
+            "batch": 10000,
+            "stopAfter": 100
         }
     ]
 }

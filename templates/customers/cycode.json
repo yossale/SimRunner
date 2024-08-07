@@ -1,5 +1,5 @@
 {
-    "connectionString": "$DEMO_DB_URI",
+    "connectionString": "$CCD_DEMO_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
@@ -7,7 +7,7 @@
             "database": "poc_demo",
             "collection": "ccd_tickets",
             "drop": true,
-            "dictionaries": {                
+            "dictionaries": {
                 "severity": [
                     "INFO",
                     "WARN",
@@ -18,7 +18,7 @@
                 "status": [
                     "Open",
                     "Resolved",
-                    "Closed"                 
+                    "Closed"
                 ]
             },
             "variables": {
@@ -34,8 +34,8 @@
                 }
             },
             "template": {
-                "_id": "%uuidBinary",                
-                "createdAt": "#createDate",                
+                "_id": "%uuidBinary",
+                "createdAt": "#createDate",
                 "updatedAt": {
                     "%date": {
                         "min": "#createDate",
@@ -46,11 +46,24 @@
                 },
                 "tenantId": "#tenantId",
                 "ownerUserId": null,
-                "projectIds": {"%array": { "min": 1, "max": 10, "of": { "%stringTemplate": {
-                        "template": "projectId_&&"
-                    } }}},
+                "projectIds": {
+                    "%array": {
+                        "min": 1,
+                        "max": 10,
+                        "of": {
+                            "%stringTemplate": {
+                                "template": "projectId_&&"
+                            }
+                        }
+                    }
+                },
                 "sourcePolicyId": "%uuidString",
-                "detectionId": {"%binary": {"size": 256, "as": "hex"}},
+                "detectionId": {
+                    "%binary": {
+                        "size": 256,
+                        "as": "hex"
+                    }
+                },
                 "detectionTypeId": "%uuidString",
                 "sourcePolicyName": "Secrets detection",
                 "sourcePolicyType": "SensitiveContent",
@@ -58,7 +71,12 @@
                 "sourceEntityId": "str",
                 "sourceEntityName": "str",
                 "sourceEntityType": "User",
-                "severity": {"%integer": {"min": 1, "max": 5}},
+                "severity": {
+                    "%integer": {
+                        "min": 1,
+                        "max": 5
+                    }
+                },
                 "status": {
                     "%dictionary": {
                         "name": "severity"
@@ -70,66 +88,113 @@
                 "statusChangeMessage": null,
                 "remediable": "%boolean",
                 "tags": [
-                  "publicly-exposed",
-                  "code-snippet",
-                  "user-repo",
-                  "exist-in-latest-code"
+                    "publicly-exposed",
+                    "code-snippet",
+                    "user-repo",
+                    "exist-in-latest-code"
                 ],
                 "detectionDetails": {
-                  "organization_name": "",
-                  "organization_id": {
-                    "%stringTemplate": {
-                        "template": "orgId_&"
-                    }
-                  },
-                  "sha512": {"%binary": {"size": 512, "as": "hex"}},
-                  "provider": "GithubGist",
-                  "concrete_provider": "GithubGist",
-                  "length": {"%integer": {"min": 1, "max": 64}},
-                  "start_position": {"%integer": {"min": 0, "max": 1000000}},
-                  "line": {"%integer": {"min": 1, "max": 10000}},
-                  "secret_storage_details": {
-                    "_t": "System.Collections.Generic.Dictionary`2[System.String,System.Object]",
-                    "_v": {
-                      "path": "uuid.json",
-                      "folder": "secrets",
-                      "size": {"%integer": {"min": 1, "max": 10000000}},
-                      "is_external": "%boolean"
-                    }
-                  },
-                  "commit_id": {"%binary": {"size": 26, "as": "hex"}},
-                  "member_id": "str",
-                  "member_name": "str",
-                  "member_email": "str@github.com",
-                  "author_name": "str",
-                  "author_email": "str@github.com",
-                  "branch_name": {"%stringTemplate": {
-                        "template": "branchName_&"
-                    }},
-                  "committer_name": "GitHub",
-                  "committed_at": {
-                    "_t": "System.DateTimeOffset",
-                    "_v": [
-                      "%long",
-                      -240
-                    ]
-                  },
-                  "file_path": "/",
-                  "file_name": "diff.json",
-                  "file_extension": ".json",
-                  "url": "https://gist.github.com/uuid.git",
-                  "should_resolve_upon_branch_deletion": "%boolean",
-                  "position_in_line": {"%integer": {"min": 1, "max": 100}},
-                  "repository_id": "MDQ6R2lzdDdjY2Q1ZDhjMjNkMGRhOWMzMjA0NWVhNTY5NzE0NGQw",
-                  "line_in_file": {"%integer": {"min": 1, "max": 1000}},
-                  "line_type": "Added",
-                  "old_detection_id": {"%binary": {"size": 256, "as": "hex"}},
-                  "validation_status": "Revoked",
-                  "last_time_validity_checked": "%now",
-                  "last_time_checked_as_active": null,
-                  "first_time_checked_as_revoked": "%now",
-                  "validity_failure_reason": null,
-                  "member_affiliation_at_violation_time": "Contributor"
+                    "organization_name": "",
+                    "organization_id": {
+                        "%stringTemplate": {
+                            "template": "orgId_&"
+                        }
+                    },
+                    "sha512": {
+                        "%binary": {
+                            "size": 512,
+                            "as": "hex"
+                        }
+                    },
+                    "provider": "GithubGist",
+                    "concrete_provider": "GithubGist",
+                    "length": {
+                        "%integer": {
+                            "min": 1,
+                            "max": 64
+                        }
+                    },
+                    "start_position": {
+                        "%integer": {
+                            "min": 0,
+                            "max": 1000000
+                        }
+                    },
+                    "line": {
+                        "%integer": {
+                            "min": 1,
+                            "max": 10000
+                        }
+                    },
+                    "secret_storage_details": {
+                        "_t": "System.Collections.Generic.Dictionary`2[System.String,System.Object]",
+                        "_v": {
+                            "path": "uuid.json",
+                            "folder": "secrets",
+                            "size": {
+                                "%integer": {
+                                    "min": 1,
+                                    "max": 10000000
+                                }
+                            },
+                            "is_external": "%boolean"
+                        }
+                    },
+                    "commit_id": {
+                        "%binary": {
+                            "size": 26,
+                            "as": "hex"
+                        }
+                    },
+                    "member_id": "str",
+                    "member_name": "str",
+                    "member_email": "str@github.com",
+                    "author_name": "str",
+                    "author_email": "str@github.com",
+                    "branch_name": {
+                        "%stringTemplate": {
+                            "template": "branchName_&"
+                        }
+                    },
+                    "committer_name": "GitHub",
+                    "committed_at": {
+                        "_t": "System.DateTimeOffset",
+                        "_v": [
+                            "%long",
+                            -240
+                        ]
+                    },
+                    "file_path": "/",
+                    "file_name": "diff.json",
+                    "file_extension": ".json",
+                    "url": "https://gist.github.com/uuid.git",
+                    "should_resolve_upon_branch_deletion": "%boolean",
+                    "position_in_line": {
+                        "%integer": {
+                            "min": 1,
+                            "max": 100
+                        }
+                    },
+                    "repository_id": "MDQ6R2lzdDdjY2Q1ZDhjMjNkMGRhOWMzMjA0NWVhNTY5NzE0NGQw",
+                    "line_in_file": {
+                        "%integer": {
+                            "min": 1,
+                            "max": 1000
+                        }
+                    },
+                    "line_type": "Added",
+                    "old_detection_id": {
+                        "%binary": {
+                            "size": 256,
+                            "as": "hex"
+                        }
+                    },
+                    "validation_status": "Revoked",
+                    "last_time_validity_checked": "%now",
+                    "last_time_checked_as_active": null,
+                    "first_time_checked_as_revoked": "%now",
+                    "validity_failure_reason": null,
+                    "member_affiliation_at_violation_time": "Contributor"
                 },
                 "correlationMessage": "str",
                 "isHidden": "%boolean",
@@ -143,7 +208,12 @@
                 "subCategory": "Secrets",
                 "subCategoryV2": "Development Tools",
                 "classification": null,
-                "priority": {"%integer": {"min": 0, "max": 10}},
+                "priority": {
+                    "%integer": {
+                        "min": 0,
+                        "max": 10
+                    }
+                },
                 "metadata": null,
                 "timestamp": null,
                 "precedence": null,
@@ -152,34 +222,110 @@
                 "labels": [],
                 "policyLabels": [],
                 "sdlcStages": [
-                  "Code"
+                    "Code"
                 ],
                 "policyTags": [],
                 "remediations": [],
                 "instructionDetails": {
-                  "instructionNameToSingleIdMap": null,
-                  "instructionNameToMultipleIdsMap": null,
-                  "instructionTags": null
+                    "instructionNameToSingleIdMap": null,
+                    "instructionNameToMultipleIdsMap": null,
+                    "instructionTags": null
                 },
                 "sdlcStage": "Code",
-                "riskScore": {"%double": {"min": 0.0, "max": 10.0}},
+                "riskScore": {
+                    "%double": {
+                        "min": 0.0,
+                        "max": 10.0
+                    }
+                },
                 "riskScoreSeverity": {
                     "%dictionary": {
                         "name": "severity"
                     }
                 },
                 "externalDetectionReferences": []
-              },
-            "remember": [
-            ],
-            "indexes": []
+            },
+            "remember": [],
+            "indexes": [
+                {
+                    "tenantId": 1,
+                    "severity": -1,
+                    "status": 1,
+                    "riskScoreSeverity": -1,
+                    "sdlcStage": 1,
+                    "detectionRuleId": 1,
+                    "detectionTypeId": 1,
+                    "isHidden": 1,
+                    "isPolicyDisabled": 1,
+                    "category": 1,
+                    "provider": 1,
+                    "priority": 1,
+                    "createdAt": -1,
+                    "riskScore": -1
+                }
+            ]
         }
     ],
     "workloads": [
         {
-            "name": "100K",
+            "name": "2M",
             "variables": {
-                "tenantId": "100K"
+                "tenantId": "2M_A"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 2000
+        },
+        {
+            "name": "2M",
+            "variables": {
+                "tenantId": "2M_B"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 2000
+        },
+        {
+            "name": "2M",
+            "variables": {
+                "tenantId": "2M_C"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 2000
+        },
+        {
+            "name": "3M",
+            "variables": {
+                "tenantId": "3M"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 3000
+        },
+        {
+            "name": "5M",
+            "variables": {
+                "tenantId": "5M"
+            },
+            "template": "cycode1",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 5000
+        },
+        {
+            "name": "10M",
+            "variables": {
+                "tenantId": "10M"
             },
             "template": "cycode1",
             "op": "insert",
