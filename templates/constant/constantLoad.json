@@ -1,12 +1,12 @@
 {
-    "connectionString": "$BCP_DB_URI",
+    "connectionString": "$DEMO_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
             "name": "constantLoad",
             "database": "poc_demo",
             "collection": "tickets_constantLoad",
-            "drop": true,
+            "drop": false,
             "dictionaries": {
                 "statuses": [
                     "OPEN",
