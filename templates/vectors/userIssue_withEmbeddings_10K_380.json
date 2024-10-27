@@ -4,7 +4,7 @@
     "templates": [
         {
             "name": "userTicket",
-            "database": "vectors",
+            "database": "vectors_8",
             "collection": "tickets_10K_380",
             "drop": true,
             "dictionaries": {

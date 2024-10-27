@@ -1,0 +1,127 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 100,
+    "templates": [
+        {
+            "name": "index_sampler",
+            "database": "poc_demo",
+            "collection": "index_sampler",
+            "drop": true,
+            "variables": {
+                "createDate": {
+                    "%date": {
+                        "min": {
+                            "$date": "2021-10-01"
+                        },
+                        "max": {
+                            "$date": "2023-03-23"
+                        }
+                    }
+                }
+            },
+            "template": {
+                "_id": "%objectid",
+                "tenantId": "#tenantId",
+                "name": "%fullName",
+                "title": "%lorem.sentence",
+                "createdAt": "#createDate",
+                "customerId": "%natural",
+                "fixedIntArray": {
+                    "%array": {
+                        "size": 10,
+                        "of": "%natural"
+                    }
+                },
+                "varIntArray": {
+                    "%array": {
+                        "min": 5,
+                        "max": 15,
+                        "of": "%natural"
+                    }
+                },
+                "fixedObjArray": {
+                    "%array": {
+                        "size": 10,
+                        "of": {
+                            "%keyValueMap": {
+                                "min": 3,
+                                "max": 6,
+                                "key": {
+                                    "%stringTemplate": {
+                                        "template": "keyId_&&&"
+                                    }
+                                },
+                                "value": {
+                                    "%oneOf": {
+                                        "options": [
+                                            "%natural",
+                                            "%date",
+                                            "%lorem.sentence"
+                                        ],
+                                        "weights": [
+                                            1.0,
+                                            1.0,
+                                            1.0
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "properties": {
+                    "%keyValueMap": {
+                        "min": 3,
+                        "max": 6,
+                        "key": {
+                            "%stringTemplate": {
+                                "template": "keyId_&&&"
+                            }
+                        },
+                        "value": {
+                            "%oneOf": {
+                                "options": [
+                                    "%natural",
+                                    "%date",
+                                    "%lorem.sentence"
+                                ],
+                                "weights": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "indexes": [
+                {
+                    "fixedIntArray": 1
+                },
+                {
+                    "varIntArray": 1
+                },
+                {
+                    "fixedObjArray.*" : 1
+                },
+                {
+                    "properties": 1
+                }
+            ]
+        }
+    ],
+    "workloads": [
+        {
+            "name": "IndexesSizing",
+            "variables": {
+                "tenantId": "1M"
+            },
+            "template": "index_sampler",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 1000
+        }
+    ]
+}

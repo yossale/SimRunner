@@ -1,12 +1,12 @@
 {
-    "connectionString": "$DEMO_DB_URI",
+    "connectionString": "$NUVEI_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
             "name": "userTicket",
-            "database": "vectors_8",
-            "collection": "tickets_1M_1536",
-            "drop": true,
+            "database": "poc_demo",
+            "collection": "tickets_af",
+            "drop": false,
             "dictionaries": {
                 "statuses": [
                     "OPEN",
@@ -42,6 +42,8 @@
             },
             "template": {
                 "_id": "%objectid",
+                "uuid": "%uuidBinary",
+                "uuidStr": {"%toString": {"of": "#uuid"}},
                 "tenantId": "#tenantId",
                 "name": "%fullName",
                 "title": "%lorem.sentence",
@@ -79,40 +81,47 @@
                     "%dictionary": {
                         "name": "severity"
                     }
-                },
-                "embedding": {
-                    "%array": {
-                        "size": 1536,
-                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
-                    }
                 }
-            },            
-            "indexes": [                
+            },
+            "remember": [
                 {
-                    "tenantId": 1,
-                    "createdAt": -1,
+                    "compound": [
+                        "customerId",
+                        "assignee"
+                    ],
+                    "name": "customerAndAssignee"
+                }
+            ],
+            "indexes": [
+                {
+                    "ticketId": 1
+                },
+                {
+                    "status": 1,
                     "severity": 1
-                },                
+                },
+                {
+                    "createdAt": -1
+                },
                 {
                     "tenantId": 1,
-                    "createdAt": -1,
-                    "assignee": 1,
-                    "status": 1
+                    "assignee": 1
                 }
             ]
         }
     ],
-    "workloads": [        
+    "workloads": [
         {
-            "name": "1M",
+            "name": "100M",
             "variables": {
-                "tenantId": "1M"
+                "tenantId": "phase2"
             },
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
-            "batch": 100,
-            "stopAfter": 1000
-        }        
+            "batch": 10,
+            "stopAfter": 10
+        }
+        
     ]
 }

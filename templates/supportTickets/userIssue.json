@@ -1,11 +1,11 @@
 {
-    "connectionString": "$DEMO_DB_URI",
+    "connectionString": "$NUVEI_DB_URI",
     "reportInterval": 10000,
     "templates": [
         {
             "name": "userTicket",
-            "database": "poc_demo",
-            "collection": "tickets_af",
+            "database": "nuvei_demo1",
+            "collection": "sample",
             "drop": true,
             "dictionaries": {
                 "statuses": [
