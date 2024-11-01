@@ -117,7 +117,8 @@
             "template": "constantLoad",
             "op": "insert",
             "threads": 20,
-            "batch": 100,            
+            "batch": 100,    
+            "pace": 100,        
             "stopAfter": 1000000
         }        
     ]
