@@ -1,0 +1,66 @@
+{
+    "connectionString": "$DEMO_DB_URI",    
+    "reportInterval": 10000,
+    "templates": [        
+        {
+            "name": "ts_sample",
+            "database": "iot_sample",
+            "collection": "ts_1",
+            "drop": true,
+            "createOptions": {
+                "timeseries": {
+                    "timeField": "ts",
+                    "metaField": "sId",
+                    "granularity": "SECONDS"
+                 }
+            },            
+            "template": {
+                "_id": "%objectid",                
+                "ts": "%now",
+                "sId": {"%natural": {"min": 1000, "max": 2000}},
+                "measurments": {
+                    "temp": {"%double": {"min": -60, "max": 60}},
+                    "alt": {"%double": {"min": -430, "max": 8848}}
+                }                                
+             },            
+            "indexes": [  ]
+        },
+        {
+            "name": "reg_sample",
+            "database": "iot_sample",
+            "collection": "reg_1",
+            "drop": true,
+            "createOptions": {},            
+            "template": {
+                "_id": "%objectid",                
+                "ts": "%now",
+                "sId": {"%natural": {"min": 1000, "max": 2000}},
+                "measurments": {
+                    "temp": {"%double": {"min": -60, "max": 60}},
+                    "alt": {"%double": {"min": -430, "max": 8848}}
+                }                                
+             },            
+            "indexes": [ ]
+        }
+    ],
+
+    "workloads": [        
+        {
+            "name": "Create TS collection",
+            "template": "ts_sample",
+            "op": "insert",
+            "threads": 4,
+            "batch": 100,
+            "stopAfter": 250
+        },
+        {
+            "name": "Create TS collection",
+            "template": "reg_sample",
+            "op": "insert",
+            "threads": 4,
+            "batch": 100,
+            "stopAfter": 250
+        }
+    ]
+    
+}
