@@ -1,0 +1,76 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "userTicket",
+            "database": "poc_demo",
+            "collection": "upserts",
+            "drop": false,
+            "template": {
+                "_id": "%objectid",
+                "customerId": {
+                    "%sum": {
+                        "of": [
+                            1000000,
+                            "%sequence"
+                        ]
+                    }
+                },
+                "updateAt": "%now",
+                "balance": "%double",
+                "embedding": {
+                    "%array": {
+                        "size": 1536,
+                        "of":  {"%double": {"min": -0.9, "max": 0.97}} 
+                    }
+                }
+            },
+            "indexes": [
+                {
+                    "customerId": 1
+                },
+                {
+                    "updateAt": 1
+                },
+                {
+                    "balance": -1
+                }
+            ]
+        }
+    ],
+    "workloads": [
+        
+        {
+            "name": "Load",
+            "variables": {
+                "tenantId": "100K"
+            },
+            "template": "userTicket",
+            "op": "updateOne",
+            "params": {
+                "filter": {
+                    "_id": {
+                        "%sum": {
+                        "of": [
+                            1000000,
+                            {"%integer": {"min": 0, "max": 100000}}
+                        ]
+                    }
+                    }
+                },
+                "update": {
+                    "$set": {
+                        "balance": {"%double": {"min": 0.0, "max": 100000.0}},
+                        "updateAt": "%now"
+                    }
+                },
+                "upsert": false
+            },
+            "threads": 15,
+            "batch": 100,
+            "stopAfter": 10000
+        }
+        
+    ]
+}

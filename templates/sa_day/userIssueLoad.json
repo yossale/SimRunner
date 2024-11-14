@@ -6,7 +6,7 @@
             "name": "userTicket",
             "database": "poc_demo",
             "collection": "tickets_af",
-            "drop": true,
+            "drop": false,
             "dictionaries": {
                 "statuses": [
                     "OPEN",
@@ -116,21 +116,10 @@
     ],
     "workloads": [
         {
-            "name": "Group By",
-            "template": "userTicket",
-            "op": "insert",
-            "threads": 10,
-            "batch": 1,
-            "stopAfter": 100000
-        },
-        {
-            "name": "100M",
-            "variables": {
-                "tenantId": "100M"
-            },
+            "name": "GroupBys 1M",            
             "template": "userTicket",
             "op": "aggregate",
-            "threads": 10,
+            "threads": 200,
             "stopAfter": 100000,
             "params": {
                 "pipeline": [
@@ -140,7 +129,37 @@
                                 "%dictionary": {
                                     "name": "assignee"
                                 }
+                            },
+                            "tenantId": "1M"                                                        
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": "$status",
+                            "count": {
+                                "$count": {}
                             }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "GroupBys 2M",            
+            "template": "userTicket",
+            "op": "aggregate",
+            "threads": 20,
+            "stopAfter": 100000,
+            "params": {
+                "pipeline": [
+                    {
+                        "$match": {
+                            "assignee": {
+                                "%dictionary": {
+                                    "name": "assignee"
+                                }
+                            },
+                            "tenantId": "100M"                                                        
                         }
                     },
                     {

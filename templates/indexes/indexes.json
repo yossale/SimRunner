@@ -122,6 +122,17 @@
             "threads": 10,
             "batch": 100,
             "stopAfter": 1000
+        },
+        {
+            "name": "IndexesSizing",
+            "variables": {
+                "tenantId": "2M"
+            },
+            "template": "index_sampler",
+            "op": "insert",
+            "threads": 20,
+            "batch": 100,
+            "stopAfter": 1000
         }
     ]
 }

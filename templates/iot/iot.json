@@ -40,7 +40,9 @@
                     "alt": {"%double": {"min": -430, "max": 8848}}
                 }                                
              },            
-            "indexes": [ ]
+            "indexes": [
+                
+             ]
         }
     ],
 

@@ -1,0 +1,43 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "userTicket",
+            "database": "poc_demo",
+            "collection": "upserts_small_doc",
+            "drop": true,            
+            
+            "template": {
+                "_id": "%objectid",                
+                "customerId": {"%sum":{"of":[ 1000000, "%sequence" ]}},                                
+                "updateAt": "%now",
+                "balance": "%double"
+            },            
+            "indexes": [
+                {
+                    "customerId": 1
+                },
+                {
+                    "updateAt": 1                    
+                },
+                {
+                    "balance": -1
+                }
+            ]
+        }
+    ],
+    "workloads": [
+        {
+            "name": "100K",
+            "variables": {
+                "tenantId": "100K"
+            },
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 10,
+            "batch": 100,
+            "stopAfter": 100
+        }
+    ]
+}
