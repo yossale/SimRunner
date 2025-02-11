@@ -1,0 +1,56 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "employeeTicket",
+            "database": "federated_assignees",
+            "collection": "employee_info",
+            "drop": true,            
+            "dictionaries": {
+                "assignee": [
+                    "Margot Robbie",
+                    "Ryan Gosling",
+                    "Will Ferrell",
+                    "Emma Mackey",
+                    "Simu Liu",
+                    "Michael Cera",
+                    "Kate McKinnon",
+                    "Ameirca Ferrera"
+                ]
+            },
+            "template": {
+                "_id": "%objectid",
+                "description": "%lorem.sentence",                
+                "employeeId": {
+                    "%number": {
+                        "min": 1000,
+                        "max": 12000
+                    }
+                },
+                "assignee": {
+                    "%dictionary": {
+                        "name": "assignee"
+                    }
+                },
+                "updateAt": {
+                    "%date": {
+                        "min": {
+                            "$date": "2023-08-23"
+                        }
+                    }
+                }
+            }            
+        }
+    ],
+    "workloads": [
+        {
+            "name": "Insert Employee Ticket",
+            "template": "employeeTicket",
+            "op": "insert",
+            "threads": 1,
+            "batch": 1,
+            "stopAfter": 20
+        }
+    ]
+}

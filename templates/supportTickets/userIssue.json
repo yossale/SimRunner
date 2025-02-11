@@ -43,11 +43,7 @@
             "template": {
                 "_id": "%objectid",
                 "uuid": "%uuidBinary",
-                "uuidStr": {
-                    "%toString": {
-                        "of": "#uuid"
-                    }
-                },
+                "uuidStr": {"%toString": {"of": "#uuid"}},
                 "tenantId": "#tenantId",
                 "name": "%fullName",
                 "title": "%lorem.sentence",
@@ -116,7 +112,7 @@
     ],
     "workloads": [
         {
-            "name": "Group By",
+            "name": "Group By",            
             "template": "userTicket",
             "op": "insert",
             "threads": 10,
@@ -136,16 +132,13 @@
                 "pipeline": [
                     {
                         "$match": {
-                            "assignee": {
-                                "%dictionary": {
-                                    "name": "assignee"
-                                }
-                            }
+                            "customerId": "#customerAndAssignee.customerId",
+                            "assignee": "#customerAndAssignee.assignee"
                         }
                     },
                     {
-                        "$group": {
-                            "_id": "$status",
+                        "$group": {                            
+                            "_id": "#customerAndAssignee.customerId",
                             "count": {
                                 "$count": {}
                             }

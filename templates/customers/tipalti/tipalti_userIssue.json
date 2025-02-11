@@ -1,0 +1,143 @@
+{
+    "connectionString": "$DEMO_DB_URI",
+    "reportInterval": 10000,
+    "templates": [
+        {
+            "name": "userTicket",
+            "database": "poc_demo",
+            "collection": "tiplati_invoice",
+            "drop": true,
+            "dictionaries": {
+                "statuses": [
+                    "OPEN",
+                    "PENDING",
+                    "REJECTED",
+                    "CLOSED_BY_USER",
+                    "FIXED",
+                    "CLOSED"
+                ],
+                "severity": [
+                    "LOW",
+                    "NORMAL",
+                    "HIGH",
+                    "URGENT",
+                    "CRITICAL"
+                ],
+                "assignee": {
+                    "file": "./resources/actors_100.json",
+                    "type": "json"
+                }
+            },
+            "variables": {
+                "createDate": {
+                    "%date": {
+                        "min": {
+                            "$date": "2021-10-01"
+                        },
+                        "max": {
+                            "$date": "2023-03-23"
+                        }
+                    }
+                }
+            },
+            "template": {
+                "_id": "%objectid",
+                "PublicId": {
+                    "%stringTemplate": {
+                        "template": "&&&&&&&&&&&&&&&&&&&"
+                    }
+                },
+                "InternalId": {"%long": {"min": 10000000}},
+                "uuid": "%uuidBinary",
+                "uuidStr": {
+                    "%toString": {
+                        "of": "#uuid"
+                    }
+                },
+                "tenantId": "#tenantId",
+                "name": "%fullName",
+                "title": "%lorem.sentence",
+                "description": "%lorem.sentence",
+                "createdAt": "#createDate",
+                "updatesCounter" : 0,
+                "ticketId": {
+                    "%number": {
+                        "min": 10000
+                    }
+                },
+                "customerId": {
+                    "%stringTemplate": {
+                        "template": "!!&&?!??&"
+                    }
+                },
+                "assignee": {
+                    "%dictionary": {
+                        "name": "assignee"
+                    }
+                },
+                "status": {
+                    "%dictionary": {
+                        "name": "statuses"
+                    }
+                },
+                "updateAt": {
+                    "%date": {
+                        "min": "#createDate",
+                        "max": {
+                            "$date": "2023-08-23"
+                        }
+                    }
+                },
+                "severity": {
+                    "%dictionary": {
+                        "name": "severity"
+                    }
+                },
+                "binArray": {"%array": { "min": 50, "max": 400, "of": { "%binary": {"size": 2048}  }}}
+            },
+            "remember": [
+                {
+                    "field": "InternalId",
+                    "name": "internalId"
+                }
+            ],
+            "indexes": [
+                {
+                    "PublicId": 1
+                },
+                {
+                    "InternalId": 1                    
+                },
+                {
+                    "updatesCounter": 1
+                }
+            ]
+        }
+    ],
+    "workloads": [
+        {
+            "name": "Inserts",
+            "comment": "Inserting 1 new document every 800ms",
+            "template": "userTicket",
+            "op": "insert",
+            "threads": 1,
+            "batch": 1,
+            "stopAfter": 20000,
+            "comment_pace": 800
+        },
+        {
+            "name": "Updates",
+            "comment": "Updating 1 document every 150ms from 3 thread",
+            "template": "userTicket",
+            "op": "updateOne",
+            "threads": 3,
+            "stopAfter": 400000,
+            "params": {
+                "filter": {"InternalId": "#internalId"},
+                "update": {"$inc": { "updatesCounter": 1}}
+
+            },
+            "comment_pace": 300
+        }
+    ]
+}
